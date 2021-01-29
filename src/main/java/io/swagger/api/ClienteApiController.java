@@ -50,8 +50,39 @@ public class ClienteApiController implements ClienteApi {
 	public ResponseEntity<Cliente> alteraExistente(
 			@ApiParam(value = "Id do cliente.", required = true) @PathVariable("id") Integer id,
 			@ApiParam(value = "", required = true) @Valid @RequestBody Cliente cliente) {
-		// TO DO
-		return null;
+
+		ResponseEntity<Cliente> responseEntity = null;
+
+		try {
+			cliente.setId(id);
+			Cliente clienteUpdate = clienteDAO.altera(cliente);
+			
+			// tratamento caso operecao altera falhar
+			if (clienteUpdate == null) {
+				throw new RuntimeException("Erro ao tentar alterar cliente.");
+			}
+			
+			//202 sucesso
+			responseEntity = new ResponseEntity<Cliente>(clienteUpdate, getHeaderLocation(clienteUpdate.getId()),
+					HttpStatus.ACCEPTED);
+
+		} catch (Exception e) {
+			log.error("Falha ao tentar alterar cliente.", e);
+			responseEntity = new ResponseEntity<Cliente>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return responseEntity;
+	}
+
+	private MultiValueMap<String, String> getHeaderLocation(Integer id) {
+		
+		//instance and replaces URI template variables
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
+
+		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+		headers.add("location", location.getPath());
+
+		return headers;
 	}
 
 	public ResponseEntity<Cliente> alteraStatusPorId(
