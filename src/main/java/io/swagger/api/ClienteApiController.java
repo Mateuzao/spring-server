@@ -56,13 +56,13 @@ public class ClienteApiController implements ClienteApi {
 		try {
 			cliente.setId(id);
 			Cliente clienteUpdate = clienteDAO.altera(cliente);
-			
+
 			// tratamento caso operecao altera falhar
 			if (clienteUpdate == null) {
 				throw new RuntimeException("Erro ao tentar alterar cliente.");
 			}
-			
-			//202 sucesso
+
+			// 202 sucesso
 			responseEntity = new ResponseEntity<Cliente>(clienteUpdate, getHeaderLocation(clienteUpdate.getId()),
 					HttpStatus.ACCEPTED);
 
@@ -75,8 +75,8 @@ public class ClienteApiController implements ClienteApi {
 	}
 
 	private MultiValueMap<String, String> getHeaderLocation(Integer id) {
-		
-		//instance and replaces URI template variables
+
+		// instance and replaces URI template variables
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
 
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
@@ -138,8 +138,26 @@ public class ClienteApiController implements ClienteApi {
 
 	public ResponseEntity<Cliente> consultaPorId(
 			@ApiParam(value = "Numero do id do cliente", required = true) @PathVariable("id") Integer id) {
-		// TO DO
-		return null;
+		ResponseEntity<Cliente> responseEntity = null;
+
+		try {
+
+			Cliente cliente = clienteDAO.consultaPorId(id);
+			
+			// 404 Not Found
+			if (cliente == null) {
+				responseEntity = new ResponseEntity<Cliente>(HttpStatus.NOT_FOUND);
+			} else {
+				//200 sucesso 
+				responseEntity = new ResponseEntity<Cliente>(cliente, HttpStatus.OK);
+			}
+
+		} catch (Exception e) {
+			log.error("Falha ao tentar consultar cliente por id.", e);
+			return new ResponseEntity<Cliente>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return responseEntity;
 	}
 
 	public ResponseEntity<Cliente> consultaPorSobrenome(
