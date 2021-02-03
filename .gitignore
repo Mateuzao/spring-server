@@ -3,3 +3,6 @@
 .gitignore
 .project
 .settings/
+.swagger-codegen
+.swagger-codegen-ignore
+
