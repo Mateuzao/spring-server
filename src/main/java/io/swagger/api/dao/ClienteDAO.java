@@ -179,7 +179,7 @@ public class ClienteDAO {
     	cliente.setId(125);
     	cliente.setNome("Mateus Cavalcante");
     	cliente.setSobrenome("Cavalcante");
-    	cliente.setIniciais("MAN");
+    	cliente.setIniciais("MCS");
     	cliente.setStatus(true);
     	cliente.setTipo(TipoEnum.INTERNO);
     	cliente.setDataNascimento(LocalDate.of(1991, 6, 12));

@@ -6,6 +6,7 @@
 package io.swagger.api;
 
 import io.swagger.model.Cliente;
+import io.swagger.model.Clientes;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -81,7 +82,7 @@ public interface ClienteApi {
 
     @ApiOperation(value = "Consulta cliente existente por sobrenome.", nickname = "consultaPorSobrenome", notes = "Esta operação tem por objetivo consultar um cliente existente por sobrenome.", response = Cliente.class, tags={ "Consulta", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Sucesso ao consultar cliente por sobrenome.", response = Cliente.class),
+        @ApiResponse(code = 200, message = "Sucesso ao consultar cliente por sobrenome.", response = Clientes.class),
         @ApiResponse(code = 400, message = "Consulta inválida."),
         @ApiResponse(code = 401, message = "Consulta não autorizada."),
         @ApiResponse(code = 404, message = "Nenhum cliente encontrado para pesquisa."),
@@ -90,7 +91,7 @@ public interface ClienteApi {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.GET)
-    ResponseEntity<Cliente> consultaPorSobrenome(@ApiParam(value = "Sobrenome do cliente.",required=true) @PathVariable("sobrenome") String sobrenome);
+    ResponseEntity<Clientes> consultaPorSobrenome(@ApiParam(value = "Sobrenome do cliente.",required=true) @PathVariable("sobrenome") String sobrenome);
 
 
     @ApiOperation(value = "Exclui um cliente existente.", nickname = "excluiExistente", notes = "Esta operação tem por objetivo excluir um cliente existente.", tags={ "Exclusao", })

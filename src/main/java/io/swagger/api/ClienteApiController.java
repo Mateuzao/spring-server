@@ -1,6 +1,8 @@
 package io.swagger.api;
 
 import io.swagger.model.Cliente;
+import io.swagger.model.Clientes;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
 import io.swagger.api.dao.ClienteDAO;
@@ -143,12 +145,12 @@ public class ClienteApiController implements ClienteApi {
 		try {
 
 			Cliente cliente = clienteDAO.consultaPorId(id);
-			
+
 			// 404 Not Found
 			if (cliente == null) {
 				responseEntity = new ResponseEntity<Cliente>(HttpStatus.NOT_FOUND);
 			} else {
-				//200 sucesso 
+				// 200 sucesso
 				responseEntity = new ResponseEntity<Cliente>(cliente, HttpStatus.OK);
 			}
 
@@ -160,10 +162,31 @@ public class ClienteApiController implements ClienteApi {
 		return responseEntity;
 	}
 
-	public ResponseEntity<Cliente> consultaPorSobrenome(
+	public ResponseEntity<Clientes> consultaPorSobrenome(
 			@ApiParam(value = "Sobrenome do cliente.", required = true) @PathVariable("sobrenome") String sobrenome) {
-		// TO DO
-		return null;
+
+		ResponseEntity<Clientes> responseEntity = null;
+
+		try {
+
+			List<Cliente> clienteslz = clienteDAO.consultaPorSobrenome(sobrenome);
+			
+			//404 nenhum cliente com esse sobrenome 
+			if (clienteslz == null || (clienteslz.size() <= 0)) {
+				responseEntity = new ResponseEntity<Clientes>(HttpStatus.NOT_FOUND);
+			} else {
+				responseEntity = new ResponseEntity<Clientes>(
+						objectMapper.readValue(objectMapper.writeValueAsString(clienteslz), Clientes.class),
+						HttpStatus.OK);
+			}
+
+		} catch (IOException e) {
+			log.error("Falha o tentar consultar clientes por sobrenome.", e);
+			responseEntity = new ResponseEntity<Clientes>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return responseEntity;
+
 	}
 
 	public ResponseEntity<Void> excluiExistente(
