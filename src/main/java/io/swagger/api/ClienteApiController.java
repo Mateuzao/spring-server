@@ -87,11 +87,26 @@ public class ClienteApiController implements ClienteApi {
 		return headers;
 	}
 
-	public ResponseEntity<Cliente> alteraStatusPorId(
-			@ApiParam(value = "Status do cliente.", required = true, allowableValues = "\"ativo\", \"inativo\"") @PathVariable("status") String status,
-			@ApiParam(value = "Numero do id do cliente.", required = true) @PathVariable("id") Integer id) {
-		// TO DO
-		return null;
+	public ResponseEntity<Cliente> alteraStatusPorId(@ApiParam(value = "Status do cliente.",required=true, allowableValues = "\"ativo\", \"inativo\"") @PathVariable("status") String status,@ApiParam(value = "Numero do id do cliente.",required=true) @PathVariable("id") Integer id) {
+
+		ResponseEntity<Cliente> responseEntity = null;
+
+		try {
+
+			Cliente clienteUpdateStatus = clienteDAO.alteraStatusPorId(id, status);
+
+			if(clienteUpdateStatus == null) {
+				throw new RuntimeException("Erro ao tentar alterar cliente.");
+			}
+
+			responseEntity = new ResponseEntity<Cliente>(clienteUpdateStatus, getHeaderLocation(clienteUpdateStatus.getId()), HttpStatus.ACCEPTED);
+
+		} catch (Exception e) {
+			log.error("Falha ao tentar alterar status do cliente.", e);
+			responseEntity = new ResponseEntity<Cliente>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return responseEntity;
 	}
 
 	public ResponseEntity<Cliente> cadastraNovo(
@@ -189,10 +204,27 @@ public class ClienteApiController implements ClienteApi {
 
 	}
 
-	public ResponseEntity<Void> excluiExistente(
-			@ApiParam(value = "Numero do id do cliente.", required = true) @PathVariable("id") Integer id) {
-		// TO DO
-		return null;
+	public ResponseEntity<Void> excluiExistente(@ApiParam(value = "Numero do id do cliente.",required=true) @PathVariable("id") Integer id) {
+
+		ResponseEntity<Void> responseEntity = null;
+
+		try {
+
+			boolean excluido = clienteDAO.exclui(id);
+
+			if(excluido) {
+				responseEntity = new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			}else {
+				throw new RuntimeException("Erro ao tentar excluir cliente");
+			}
+
+		} catch (Exception e) {
+			log.error("Falha ao tentar excluir cliente por id.", e);
+			responseEntity = new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return responseEntity;
 	}
+
 
 }
